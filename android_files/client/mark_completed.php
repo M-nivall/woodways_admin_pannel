@@ -17,7 +17,7 @@ include "../../include/connections.php";
          mysqli_query($con,$update);
 
          $response['status']=1;
-         $response['message']='Thank you for choosing Citizen Cooling Solution';
+         $response['message']='Thank you for choosing Woodways Lmt';
 
      }else{
          $response['status']=0;

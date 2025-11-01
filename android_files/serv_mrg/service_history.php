@@ -5,7 +5,7 @@ include '../../include/connections.php';
 
 
 //creating a query
-$select = "SELECT b.order_id,b.order_date,b.order_remark,b.rating,b.order_status,s.product_name,s.price,c.first_name,c.last_name
+$select = "SELECT b.order_id,b.service_fee,b.order_date,b.order_remark,b.rating,b.order_status,s.product_name,s.price,c.first_name,c.last_name
          FROM bookings b
          INNER JOIN clients c ON b.client_id = c.client_id
          INNER JOIN order_items oi ON b.order_id = oi.order_id AND oi.type = 'service'
@@ -23,7 +23,7 @@ $select = "SELECT b.order_id,b.order_date,b.order_remark,b.rating,b.order_status
 
           $temp['orderID'] = $row['order_id'];
           $temp['servName'] = $row['product_name'];
-          $temp['totalFee'] = $row['price'];
+          $temp['totalFee'] = $row['service_fee'];
           $temp['orderDate'] = $row['order_date'];
           $temp['orderRemark'] = $row['order_remark'];
           $temp['rating'] = $row['rating'];

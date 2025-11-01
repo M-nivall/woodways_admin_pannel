@@ -22,8 +22,11 @@ $select = "SELECT * FROM bookings WHERE order_id='$orderID'";
 
       $item['items'] = array();
 
-      $select = "SELECT s.product_name,s.stock_id,s.price,oi.item_id,oi.quantity FROM services s 
-  INNER JOIN order_items oi on s.stock_id = oi.stock_id  WHERE oi.order_id='$orderID' AND type = 'service'";
+      $select = "SELECT s.product_name,s.stock_id,s.price,oi.item_id,oi.quantity,b.service_fee 
+      FROM services s 
+      INNER JOIN order_items oi on s.stock_id = oi.stock_id 
+      INNER JOIN bookings b ON oi.order_id = b.order_id 
+      WHERE oi.order_id='$orderID' AND type = 'service'";
       $query=mysqli_query($con,$select);
       while ($row=mysqli_fetch_array($query)){
           $temp = array();
@@ -31,7 +34,8 @@ $select = "SELECT * FROM bookings WHERE order_id='$orderID'";
           $temp['quantity'] = $row['quantity'];
           $temp['itemPrice'] = $row['price'];
           $temp['itemName'] = $row['product_name'];
-          $temp['subTotal'] = $row['price'] * $row['quantity'];
+          //$temp['subTotal'] = $row['price'] * $row['quantity'];
+          $temp['subTotal'] = $row['service_fee'];
           array_push($item['items'], $temp);
 
       }

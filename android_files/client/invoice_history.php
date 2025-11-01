@@ -5,7 +5,7 @@ include '../../include/connections.php';
 $clientID = $_POST['clientID'];
 
 // Creating a query to fetch unique orders for the specified client
-$select = "SELECT o.order_id, o.order_status, o.order_date, o.address,s.price,
+$select = "SELECT o.order_id, o.order_status, o.order_date, o.address,o.service_fee, s.price,
                   MAX(p.item_price) AS item_price, SUM(p.quantity) AS quantity, 
                   MAX(p.item_status) AS item_status 
            FROM bookings o 
@@ -28,10 +28,10 @@ if (mysqli_num_rows($query) > 0) {
 
         $temp['orderID'] = $row['order_id'];
         $temp['orderDate'] = $row['order_date'];
-        $temp['orderCost'] = $row['price'];
+        $temp['orderCost'] = $row['service_fee'];
         $temp['mpesaCode'] = $row['address'];
         $temp['shippingCost'] = $row['quantity'];
-        $temp['itemCost'] = $row['price'];
+        $temp['itemCost'] = $row['service_fee'];
 
         // Convert order_status to a readable status message
         switch ($row['order_status']) {
