@@ -20,6 +20,7 @@ while($row=mysqli_fetch_array($query)){
     $index["requestStatus"]=$row["request_status"];
     $index["requestDate"]=$row["request_date"];
     $index["amount"]=$row["amount"];
+    $index["quantity"]=$row["quantity"];
 
     array_push($response["details"],$index);
 
