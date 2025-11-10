@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] =='POST') {
     $address = $_POST['address'];
     $totalCost = $_POST['totalCost'];
     $orderCost = $_POST['orderCost'];
+    $paymentRef = $_POST['paymentRef'];
     
 
 
@@ -32,7 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] =='POST') {
         $result['message'] = "Enter address";
         echo json_encode($result);
 
-    }  else {
+    } elseif (empty($paymentRef)) {
+        $result['status'] = "0";
+        $result['message'] = "Enter payment code";
+        echo json_encode($result);
+
+    } 
+    else {
 
         // get order id where client order status = cart
         $select = "SELECT order_id FROM bookings WHERE client_id='$clientID'AND order_status='0'";
@@ -80,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] =='POST') {
                     // update client order status and insert delivery details
 
                     // get current date
-                    $update = "UPDATE bookings SET county_id='$countyID',town_id='$townID',address='$address',order_date=CURRENT_TIMESTAMP ,order_status='1'
+                    $update = "UPDATE bookings SET county_id='$countyID',town_id='$townID',address='$address',payment_code = '$paymentRef', order_date=CURRENT_TIMESTAMP ,order_status='1'
                     WHERE order_id='$orderID'AND client_id='$clientID'";
                     if (mysqli_query($con, $update)) {
 
