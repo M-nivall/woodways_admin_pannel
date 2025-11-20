@@ -16,6 +16,7 @@ $query=mysqli_query($con,$select);
           $index['toolID']=$row['tool_id'];
           $index['toolName']=$row['tool_name'];
           $index['quantity']=$row['quantity'];
+          $index['category']=$row['category'];
 
           array_push($response['details'],$index);
       }

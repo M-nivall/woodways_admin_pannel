@@ -2,23 +2,26 @@
 
 include "../../include/connections.php";
 
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-if($_SERVER['REQUEST_METHOD']=='POST'){
+    $orderID = $_POST['orderID'];
 
-$orderID=$_POST['orderID'];
+    // Update booking status
+    $updateBooking = "UPDATE bookings SET order_status = '2' WHERE order_id='$orderID'";
+    
+    // Update payment status
+    $updatePayment = "UPDATE service_payment SET payment_status = 'Paid' WHERE order_id='$orderID'";
 
-$update=" UPDATE bookings SET booking_fee_status = 'approved' WHERE order_id='$orderID'";
-if(mysqli_query($con,$update)){
+    $response = [];
 
-    $response['status']=1;
-    $response['message']='Booking Fee Approved successfully';
+    if(mysqli_query($con, $updateBooking) && mysqli_query($con, $updatePayment)) {
+        $response['status'] = 1;
+        $response['message'] = 'Payment Approved Successfully';
+    } else {
+        $response['status'] = 0;
+        $response['message'] = 'Please try again';
+    }
 
-}else{
-    $response['status']=0;
-    $response['message']='Please try again';
-
-
-}
-echo json_encode($response);
+    echo json_encode($response);
 }
 ?>

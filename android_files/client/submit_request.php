@@ -1,126 +1,62 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mwafrika
- * Date: 10/12/2019
- * Time: 11:49 AM
- */
+header("Content-Type: application/json");
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); // force errors to throw exceptions
 
-// Make payment
+include '../../include/connections.php';
 
-if ($_SERVER['REQUEST_METHOD'] =='POST') {
-
-    include '../../include/connections.php';
-
-
-    $clientID = $_POST['clientID'];
-    $countyID = $_POST['countyID'];
-    $townName = $_POST['townName'];
-    $address = $_POST['address'];
-    $totalCost = $_POST['totalCost'];
-    $orderCost = $_POST['orderCost'];
-    $paymentRef = $_POST['paymentRef'];
-    
-
-
-
-   if (empty($townName)) {
-        $result['status'] = "0";
-        $result['message'] = "Enter address";
-        echo json_encode($result);
-    } elseif (empty($address)) {
-        $result['status'] = "0";
-        $result['message'] = "Enter address";
-        echo json_encode($result);
-
-    } elseif (empty($paymentRef)) {
-        $result['status'] = "0";
-        $result['message'] = "Enter payment code";
-        echo json_encode($result);
-
-    } 
-    else {
-
-        // get order id where client order status = cart
-        $select = "SELECT order_id FROM bookings WHERE client_id='$clientID'AND order_status='0'";
-        $query = mysqli_query($con, $select);
-        $row = mysqli_fetch_array($query);
-        $orderID = $row['order_id'];  // order ID
-
-        // get item price to insert to order items
-        $select = "SELECT s.price FROM order_items oi INNER JOIN services s on oi.stock_id = s.stock_id
-        WHERE oi.order_id='$orderID' AND oi.type='service'";
-        $query = mysqli_query($con, $select);
-        while ($row = mysqli_fetch_array($query)) {
-            $price = $row['price'];  // item price
-
-            // update order items price
-            $update = "UPDATE order_items SET item_price='$price' WHERE order_id='$orderID' AND type = 'service'";
-            if (mysqli_query($con, $update)) {
-
-                    // get town id
-                    $slect = "SELECT town_id FROM towns WHERE town_name='$townName' AND county_id='$countyID'";
-                    $query = mysqli_query($con, $slect);
-                    $row = mysqli_fetch_array($query);
-                    $townID = $row['town_id'];
-
-
-                    // check if client has already submitted delivery details
-                    //if has not enter the delivery details entered by the client
-
-                    $select = "SELECT * FROM delivery WHERE client_id='$clientID'";
-                    $query = mysqli_query($con, $select);
-                    if (mysqli_num_rows($query) < 1) {
-                        // insert the delivery details
-                        $insert = "INSERT INTO delivery(county_id, town_id, client_id,address) VALUES ('$countyID','$townID','$clientID','$address')";
-                        mysqli_query($con, $insert);
-
-                    } else {
-
-                        // if user had submitted delivery details update delivery details in case user change delivery details
-                        $update = "UPDATE delivery SET county_id='$countyID',town_id='$townID',address='$address'WHERE client_id='$clientID'";
-                        mysqli_query($con, $update);
-
-                    }
-
-
-                    // update client order status and insert delivery details
-
-                    // get current date
-                    $update = "UPDATE bookings SET county_id='$countyID',town_id='$townID',address='$address',payment_code = '$paymentRef', order_date=CURRENT_TIMESTAMP ,order_status='1'
-                    WHERE order_id='$orderID'AND client_id='$clientID'";
-                    if (mysqli_query($con, $update)) {
-
-                        // if order status updated statusfully update order items status
-                        $update = "UPDATE order_items SET item_status='1' WHERE order_id='$orderID' AND type = 'service'";
-                        mysqli_query($con, $update);
-
-
-                        // update items stock levels
-
-                        $select = "SELECT stock_id,quantity,item_price FROM order_items WHERE order_id='$orderID' AND type = 'service'";
-                        $query = mysqli_query($con, $select);
-                        while ($row = mysqli_fetch_array($query)) {
-
-                            $stockID = $row['stock_id'];  // get item id
-                            $quantity = $row['quantity']; // get item quantity
-
-                            $update = "UPDATE stock SET stock=stock-'$quantity'WHERE stock_id='$stockID'";
-                            mysqli_query($con, $update);
-
-                        }
-
-                        $result['status'] = "1";
-                        $result['message'] = "Request Received";
-                        echo json_encode($result);
-
-                    }
-
-            }else{
-                $result['status'] = "0";
-                $result['message'] = "Something went long. Please try again" ;
-                echo json_encode($result);
-            }
-        }
+try {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception("Invalid request method");
     }
+
+    // Receive values from Android
+    $clientID = $_POST['clientID'] ?? '';
+    $countyID = $_POST['countyID'] ?? '';
+    $townName = $_POST['townName'] ?? '';
+    $address = $_POST['address'] ?? '';
+    $paymentRef = $_POST['paymentRef'] ?? '';
+    $serviceName = $_POST['serviceName'] ?? '';
+    $servicePrice = $_POST['servicePrice'] ?? '';
+    $serviceID = $_POST['serviceID'] ?? '';
+    $petName = $_POST['petName'] ?? '';
+    $serviceDate = $_POST['serviceDate'] ?? '';
+
+    // Validation
+    if (empty($townName)) throw new Exception("Enter town");
+    if (empty($address)) throw new Exception("Enter address");
+    if (empty($paymentRef)) throw new Exception("Enter payment code");
+
+    // Get town ID
+    $townQ = mysqli_query($con, "SELECT town_id FROM towns WHERE town_name='$townName' AND county_id='$countyID'");
+    $townRow = mysqli_fetch_assoc($townQ);
+    if (!$townRow) throw new Exception("Invalid town");
+    $townID = $townRow['town_id'];
+
+    // Delivery details
+    $exists = mysqli_query($con, "SELECT * FROM delivery WHERE client_id='$clientID'");
+    if (mysqli_num_rows($exists) < 1) {
+        mysqli_query($con, "INSERT INTO delivery(county_id, town_id, client_id, address) VALUES('$countyID', '$townID', '$clientID', '$address')");
+    } else {
+        mysqli_query($con, "UPDATE delivery SET county_id='$countyID', town_id='$townID', address='$address' WHERE client_id='$clientID'");
+    }
+
+    // Insert booking
+    $insertBooking = "INSERT INTO bookings(client_id, county_id, town_id, address, pet_name, service_id, service_name, service_fee, payment_code, order_status, order_date, service_date)
+                      VALUES('$clientID', '$countyID', '$townID', '$address', '$petName', '$serviceID', '$serviceName', '$servicePrice', '$paymentRef', '1', CURDATE(), $serviceDate)";
+
+    if (!mysqli_query($con, $insertBooking)) throw new Exception("Failed to insert booking");
+
+    $orderID = mysqli_insert_id($con);
+
+    // Insert payment
+    $insertPayment = "INSERT INTO service_payment(order_id, client_id, amount, payment_code, payment_date)
+                      VALUES('$orderID', '$clientID', '$servicePrice', '$paymentRef', CURDATE())";
+
+    if (!mysqli_query($con, $insertPayment)) throw new Exception("Failed to insert payment");
+
+    echo json_encode(["status" => "1", "message" => "Booking Request Received Successfully"]);
+
+} catch (Exception $e) {
+    echo json_encode(["status" => "0", "message" => $e->getMessage()]);
 }
+?>

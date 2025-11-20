@@ -2,38 +2,39 @@
 
 include '../../include/connections.php';
 
-$clientID = $_POST['clientID'];
+ $clientID = $_POST['clientID'];
 
-// Creating a query to fetch unique orders for the specified client
-$select = "SELECT o.order_id, o.order_status, o.order_date, o.address,o.service_fee, s.price,
-                  MAX(p.item_price) AS item_price, SUM(p.quantity) AS quantity, 
-                  MAX(p.item_status) AS item_status 
-           FROM bookings o 
-           INNER JOIN order_items p ON o.order_id = p.order_id 
-           INNER JOIN services s ON p.stock_id = s.stock_id
-           WHERE o.client_id = '$clientID' AND p.type = 'service'
-           GROUP BY o.order_id 
-           ORDER BY o.order_id DESC";
+//creating a query
+$select = "SELECT o.order_id,o.order_status,o.order_date,o.county_id,o.town_id,o.address,o.payment_code,
+          c2.first_name,c2.last_name,o.service_name,o.pet_name,o.service_fee,o.service_date
+          FROM bookings o
+          RIGHT JOIN clients c2 on o.client_id = c2.client_id WHERE o.client_id = 'clientID' ORDER BY o.order_id DESC";
 
-$query = mysqli_query($con, $select);
+  $query=mysqli_query($con,$select);
+  if(mysqli_num_rows($query)>0){
+      $results= array();
+      $results['status'] = "1";
+      $results['details'] = array();
+      $results['message']="New Bookings";
+      while ($row=mysqli_fetch_array($query)){
+          $temp = array();
 
-if (mysqli_num_rows($query) > 0) {
-    $results = array();
-    $results['status'] = "1";
-    $results['orders'] = array();
-    $results['message'] = "Order history";
-    
-    while ($row = mysqli_fetch_array($query)) {
-        $temp = array();
+          $temp['orderID'] = $row['order_id'];
+          $temp['clientName'] = $row['first_name'].' '.$row['last_name'];
+          $temp['orderDate'] = $row['order_date'];
+          $temp['orderCost'] = $row['service_fee'];
+          $temp['mpesaCode'] = $row['payment_code'];
+          $temp['shippingCost'] = $row['service_fee'];
+          $temp['itemCost'] =$row['service_fee'];
+          $temp['address'] = $row['address'];
+        
 
-        $temp['orderID'] = $row['order_id'];
-        $temp['orderDate'] = $row['order_date'];
-        $temp['orderCost'] = $row['service_fee'];
-        $temp['mpesaCode'] = $row['address'];
-        $temp['shippingCost'] = $row['quantity'];
-        $temp['itemCost'] = $row['service_fee'];
+        $temp['serviceName'] = $row['service_name'];
+        $temp['petName'] = $row['pet_name'];
+        $temp['serviceFee'] = $row['service_fee'];
+        $temp['serviceDate'] = $row['service_date'];
 
-        // Convert order_status to a readable status message
+                // Convert order_status to a readable status message
         switch ($row['order_status']) {
             case 1:
                 $temp['orderStatus'] = "Pending";
@@ -42,17 +43,19 @@ if (mysqli_num_rows($query) > 0) {
                 $temp['orderStatus'] = "Approved";
                 break;
             case 3:
-                $temp['orderStatus'] = "Shipping";
+                $temp['orderStatus'] = "Approved";
                 break;
             case 4:
-                $temp['orderStatus'] = "Pay Invoiced Amount";
+                $temp['orderStatus'] = "Approved";
                 break;
             case 5:
+                 $temp['orderStatus'] = "Approved";
+                break;
             case 6:
-                $temp['orderStatus'] = "Invoice Paid";
+                $temp['orderStatus'] = "Confirm Completion";
                 break;
             case 7:
-                $temp['orderStatus'] = "Confirm Completion";
+                $temp['orderStatus'] = "Service Completed";
                 break;
             case 8:
                 $temp['orderStatus'] = "Service Completed";
@@ -61,14 +64,42 @@ if (mysqli_num_rows($query) > 0) {
                 $temp['orderStatus'] = "Unknown";
         }
 
-        array_push($results['orders'], $temp);
-    }
-} else {
-    $results['status'] = "0";
-    $results['message'] = "No Invoice Found";
-}
+          // get county
 
-// Displaying the result in JSON format
+          $sel="SELECT county_name FROM counties WHERE county_id='".$row['county_id']."'";
+          $qury=mysqli_query($con,$sel);
+          $rowC=mysqli_fetch_array($qury);
+          $temp['county'] = $rowC['county_name'];
+
+          // get town name
+
+          $selT="SELECT town_name FROM towns WHERE town_id='".$row['town_id']."'";
+          $quryT=mysqli_query($con,$selT);
+          $rowT=mysqli_fetch_array($quryT);
+          $temp['town'] = $rowT['town_name'];
+
+          array_push($results['details'], $temp);
+
+      }
+
+
+  }else{
+      $results['status'] = "0";
+      $results['message'] = "No record found";
+
+}
+//displaying the result in json format
 echo json_encode($results);
+
+
+
+//$today = date('Ymd');
+//$startDate = date('Ymd', strtotime('-100 days'));
+//$range = $today - $startDate;
+//$rand = rand(100, 999);
+//echo $rand;
+//echo "</br>";
+//$random = substr(md5(mt_rand()), 0, 2);
+//echo $random;
 
 ?>

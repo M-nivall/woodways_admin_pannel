@@ -3,7 +3,7 @@
    include '../../include/connections.php';
 
 
-   $select="SELECT * FROM employees WHERE userlevel='Technician'";
+   $select="SELECT * FROM employees WHERE userlevel = 'Groomer'";
    $record=mysqli_query($con,$select);
 
    if(mysqli_num_rows($record)>0){

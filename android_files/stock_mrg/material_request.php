@@ -14,7 +14,7 @@ if(mysqli_num_rows($query)>0){
     $response['message']='Request';
 while($row=mysqli_fetch_array($query)){
     $index["requestID"]=$row["id"];
-    $index["name"]=$row["f_name"]." ".$row["l_name"];
+    $index["name"]=$row["username"];
     $index["phoneNo"]=$row["contact"];
     $index["items"]=$row["materials"];
     $index["requestStatus"]=$row["request_state"];

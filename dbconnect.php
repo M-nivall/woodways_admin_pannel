@@ -8,7 +8,7 @@ $phone = "";
 $errors = array(); 
 
 // connect to the database
-$db = mysqli_connect('localhost', 'root', '', 'woodways');
+$db = mysqli_connect('localhost', 'root', '', 'pet_care');
 
 // REGISTER USER
 if (isset($_POST['reg_user'])) {

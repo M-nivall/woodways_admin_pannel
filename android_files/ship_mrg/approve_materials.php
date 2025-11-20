@@ -6,9 +6,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $id = $_POST['requestID'];
     $item = $_POST['item'];
+    $orderID = $_POST['orderID'];
 
     // Update the request state in tools_requests table
     $update = "UPDATE tools_requests SET request_state='Approved' WHERE id='$id'";
+
+    $update1 = "UPDATE bookings SET order_status = '5' WHERE order_id = '$orderID'";
+    mysqli_query($con, $update1);
 
     if (mysqli_query($con, $update)) {
         

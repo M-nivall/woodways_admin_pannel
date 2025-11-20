@@ -3,26 +3,37 @@
 include '../../include/connections.php';
 
 
+
+
 //creating a query
-$select = "SELECT o.order_id,o.order_status,o.order_date,o.county_id,o.town_id,o.address,
-c2.first_name,c2.last_name 
-FROM bookings o 
-RIGHT JOIN clients c2 on o.client_id = c2.client_id WHERE o.order_status='1' ORDER BY o.order_id DESC";
+$select = "SELECT o.order_id,o.order_status,o.order_date,o.county_id,o.town_id,o.address,o.payment_code,
+          c2.first_name,c2.last_name,o.service_name,o.pet_name,o.service_fee,o.service_date
+          FROM bookings o
+          RIGHT JOIN clients c2 on o.client_id = c2.client_id WHERE o.order_status = '2' ORDER BY o.order_id DESC";
 
   $query=mysqli_query($con,$select);
   if(mysqli_num_rows($query)>0){
       $results= array();
       $results['status'] = "1";
       $results['details'] = array();
-      $results['message']="Order to ship";
+      $results['message']="New Bookings";
       while ($row=mysqli_fetch_array($query)){
           $temp = array();
 
           $temp['orderID'] = $row['order_id'];
           $temp['clientName'] = $row['first_name'].' '.$row['last_name'];
           $temp['orderDate'] = $row['order_date'];
+          $temp['orderCost'] = $row['service_fee'];
+          $temp['mpesaCode'] = $row['payment_code'];
+          $temp['shippingCost'] = $row['service_fee'];
+          $temp['itemCost'] =$row['service_fee'];
           $temp['address'] = $row['address'];
-          $temp['orderStatus'] = "Pending Technician Assignment";
+          $temp['orderStatus'] = "Pending assigned";
+
+        $temp['serviceName'] = $row['service_name'];
+        $temp['petName'] = $row['pet_name'];
+        $temp['serviceFee'] = $row['service_fee'];
+        $temp['serviceDate'] = $row['service_date'];
 
           // get county
 
@@ -45,7 +56,7 @@ RIGHT JOIN clients c2 on o.client_id = c2.client_id WHERE o.order_status='1' ORD
 
   }else{
       $results['status'] = "0";
-      $results['message'] = "Nothing  more found";
+      $results['message'] = "No record found";
 
 }
 //displaying the result in json format
