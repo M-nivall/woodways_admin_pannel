@@ -7,7 +7,7 @@ include('dbconnect.php');
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Woodwyas | Admin Login</title>
+  <title>Pet Care | Admin Login</title>
 
   <!-- Base CSS -->
   <link rel="stylesheet" href="vendors/feather/feather.css">
@@ -19,7 +19,7 @@ include('dbconnect.php');
   <!-- Custom Styles -->
   <style>
     body {
-      background: linear-gradient(135deg, #007bff 0%, #00c6ff 100%);
+      background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
       font-family: 'Poppins', sans-serif;
     }
 
@@ -44,13 +44,13 @@ include('dbconnect.php');
     }
 
     h4 {
-      color: #333;
-      font-weight: 600;
+      color: #4a2278;
+      font-weight: 700;
       margin-top: 15px;
     }
 
     h6 {
-      color: #6c757d;
+      color: #7f8c8d;
       font-size: 15px;
       margin-bottom: 30px;
     }
@@ -64,20 +64,22 @@ include('dbconnect.php');
     }
 
     .form-control:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
+      border-color: #9b59b6;
+      box-shadow: 0 0 0 0.15rem rgba(155, 89, 182, 0.25);
     }
 
     .auth-form-btn {
-      background: #007bff;
+      background: #8e44ad;
       border-radius: 10px;
       transition: 0.3s ease-in-out;
       font-weight: 600;
+      border: none;
     }
 
     .auth-form-btn:hover {
-      background: #0056b3;
+      background: #732d91;
       transform: translateY(-2px);
+      box-shadow: 0 4px 18px rgba(142, 68, 173, 0.4);
     }
 
     .error-msg {
@@ -104,9 +106,11 @@ include('dbconnect.php');
       <div class="content-wrapper auth bg-transparent">
         <div class="col-lg-4 mx-auto">
           <div class="auth-form-light text-center py-5 px-4 px-sm-5">
+
             <div class="brand-logo d-flex justify-content-center align-items-center">
               <img src="images/coolinglogo.png" alt="logo">
             </div>
+
             <h4>Admin Login</h4>
             <h6>Sign in to continue</h6>
 
@@ -122,9 +126,12 @@ include('dbconnect.php');
               </div>
 
               <div class="mt-4">
-                <button class="btn btn-block btn-primary btn-lg auth-form-btn" name="login_user" type="submit">SIGN IN</button>
+                <button class="btn btn-block btn-primary btn-lg auth-form-btn" name="login_user" type="submit">
+                  SIGN IN
+                </button>
               </div>
             </form>
+
           </div>
         </div>
       </div>

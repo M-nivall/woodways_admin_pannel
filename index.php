@@ -17,7 +17,7 @@ if (isset($_GET['logout'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Woodways Admin</title>
+  <title>Pet Care Managemet</title>
 
   <!-- Bootstrap & Vendor CSS -->
   <link rel="stylesheet" href="vendors/feather/feather.css">
@@ -60,7 +60,7 @@ if (isset($_GET['logout'])) {
       <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="index.php">
           <img src="images/coolinglogo.png" alt="logo" width="45" class="me-2">
-          <span class="fw-bold text-primary">Woodways Ltd Admin</span>
+          <span class="fw-bold text-primary">Pet Care Management</span>
         </a>
 
         <ul class="navbar-nav ms-auto">
@@ -158,7 +158,7 @@ if (isset($_GET['logout'])) {
 
         <!-- Footer -->
         <footer class="bg-white text-center py-3 mt-4 small text-muted">
-          © 2025 Woodways Limited. All rights reserved.
+          © 2025 Pet Care Management Limited. All rights reserved.
         </footer>
       </main>
     </div>
