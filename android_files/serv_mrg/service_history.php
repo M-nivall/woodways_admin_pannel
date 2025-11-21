@@ -5,12 +5,10 @@ include '../../include/connections.php';
 
 
 //creating a query
-$select = "SELECT b.order_id,b.service_fee,b.order_date,b.order_remark,b.rating,b.order_status,s.product_name,s.price,c.first_name,c.last_name
+$select = "SELECT b.order_id,b.service_fee,b.order_date,b.order_remark,b.rating,b.order_status,b.service_name,c.first_name,c.last_name
          FROM bookings b
          INNER JOIN clients c ON b.client_id = c.client_id
-         INNER JOIN order_items oi ON b.order_id = oi.order_id AND oi.type = 'service'
-         INNER JOIN services s ON oi.stock_id = s.stock_id
-         WHERE  b.order_status = '8' ORDER BY b.order_id DESC";
+         WHERE  b.order_status = '7' ORDER BY b.order_id DESC";
 
   $query=mysqli_query($con,$select);
   if(mysqli_num_rows($query)>0){
@@ -22,7 +20,7 @@ $select = "SELECT b.order_id,b.service_fee,b.order_date,b.order_remark,b.rating,
           $temp = array();
 
           $temp['orderID'] = $row['order_id'];
-          $temp['servName'] = $row['product_name'];
+          $temp['servName'] = $row['service_name'];
           $temp['totalFee'] = $row['service_fee'];
           $temp['orderDate'] = $row['order_date'];
           $temp['orderRemark'] = $row['order_remark'];
@@ -56,7 +54,7 @@ $select = "SELECT b.order_id,b.service_fee,b.order_date,b.order_remark,b.rating,
 
   }else{
       $results['status'] = "0";
-      $results['message'] = "No Invoice Found";
+      $results['message'] = "Nothing found";
 
 }
 //displaying the result in json format

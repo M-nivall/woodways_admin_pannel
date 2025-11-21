@@ -8,7 +8,7 @@ include '../../include/connections.php';
 $select = "SELECT o.order_id,o.order_status,o.order_date,o.county_id,o.town_id,o.address,o.payment_code,
           c2.first_name,c2.last_name,o.service_name,o.pet_name,o.service_fee,o.service_date
           FROM bookings o
-          RIGHT JOIN clients c2 on o.client_id = c2.client_id WHERE o.client_id = 'clientID' ORDER BY o.order_id DESC";
+          RIGHT JOIN clients c2 on o.client_id = c2.client_id WHERE o.client_id = '$clientID' ORDER BY o.order_id DESC";
 
   $query=mysqli_query($con,$select);
   if(mysqli_num_rows($query)>0){
