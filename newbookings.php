@@ -12,7 +12,7 @@ include('include/connections.php');
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Woodways</title>
+  <title>Pet Care Management</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/feather/feather.css">
   <link rel="stylesheet" href="vendors/ti-icons/css/themify-icons.css">
@@ -42,24 +42,30 @@ include('include/connections.php');
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">New Service Bookings </h4>
+                  <h4 class="card-title">Services That Have Been Completed</h4>
                  
                   <div class="">
                     <table id="zero_config" class="table  table-bordered">
                      <thead>
         <tr>
 
-            
-            <th>Booking No.</th>
-            <th> Client Name</th>
-            <th>Booked On</th>
+            <th>No</th>
+            <th> Client</th>
+            <th>Service</th>
+             <th>Pet</th>
+            <th>Staff</th>
+            <th>Amount</th>
+            <th>Payment Code</th>
             <th>Status</th>
         </tr>
         </thead>
         <tbody>
         <?php
         $select="SELECT * FROM clients c INNER JOIN bookings o on c.client_id = o.client_id
-   RIGHT JOIN payment p on o.order_id = p.order_id WHERE  o.order_status='1'";
+        INNER JOIN order_items i ON o.order_id = i.order_id
+        INNER JOIN tools_requests t ON o.order_id = t.order_id
+        INNER JOIN employees e ON e.emp_id = t.emp_id
+        RIGHT JOIN service_payment p on o.order_id = p.order_id WHERE  o.order_status ='4'";
         $query=mysqli_query($con,$select);
         while($row=mysqli_fetch_array($query)){
             ?>
@@ -67,8 +73,12 @@ include('include/connections.php');
 
                 <td><?php echo $row['order_id']?> </td>
                 <td><?php echo $row['first_name']. ' '. $row['last_name']?> </td>
-                <td><?php echo $row['order_date']?> </td>
-                <td>Pending </td>
+                <td><?php echo $row['service_name']?> </td>
+                <td><?php echo $row['pet_name']?> </td>
+                <td><?php echo $row['f_name']?> </td>
+                <td><?php echo $row['service_fee']?> </td>
+                <td> <?php echo $row['payment_code']?></td>
+                <td>Completed</td>
             </tr>
             <?php
 

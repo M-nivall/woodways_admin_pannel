@@ -41,6 +41,7 @@ include('include/connections.php');
                             <th>#</th>
                             <th>Name</th>
                             <th>Service</th>
+                             <th>Pet</th>
                             <th>Amount KES</th>
                             <th>Mpesa code</th>
                             <th>Date</th>
@@ -49,11 +50,7 @@ include('include/connections.php');
                         <tbody>
                           <?php
                           $select = "SELECT * FROM clients c 
-                            INNER JOIN bookings o ON c.client_id = o.client_id
-                            INNER JOIN order_items oi ON oi.order_id = o.order_id
-                            INNER JOIN services s ON oi.stock_id = s.stock_id
-                            RIGHT JOIN service_payment p ON o.order_id = p.order_id 
-                            WHERE p.status = '1' AND oi.type = 'service'";
+                            INNER JOIN bookings o ON c.client_id = o.client_id";
                           $query = mysqli_query($con, $select);
                           while ($row = mysqli_fetch_array($query)) {
                           ?>
@@ -61,9 +58,10 @@ include('include/connections.php');
                               <td><a href="service_details.php?get=<?php echo $row['order_id'] ?>">View</a></td>
                               <td><?php echo $row['order_id'] ?></td>
                               <td><?php echo $row['first_name'] . ' ' . $row['last_name'] ?></td>
-                              <td><?php echo $row['product_name'] ?></td>
-                              <td><?php echo $row['total_cost'] ?></td>
-                              <td><?php echo $row['mpesa_code'] ?></td>
+                              <td><?php echo $row['service_name'] ?></td>
+                              <td><?php echo $row['pet_name'] ?></td>
+                              <td><?php echo $row['service_fee'] ?></td>
+                              <td><?php echo $row['payment_code'] ?></td>
                               <td><?php echo $row['order_date'] ?></td>
                             </tr>
                           <?php

@@ -12,7 +12,7 @@ include('include/connections.php');
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Woodways</title>
+  <title>Pet Care Management</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/feather/feather.css">
   <link rel="stylesheet" href="vendors/ti-icons/css/themify-icons.css">
@@ -58,8 +58,8 @@ include('include/connections.php');
                                   <tbody>
                                     <tr><td><b>Paid By </b></td><td><?php print $row['first_name']." ".$row['last_name']?></td></tr>
                         <tr><td><b> Phone number</b></td><td><?php print $row['phone_no']?></td></tr>
-                        <tr><td><b> Amount</b></td><td> Kes <?php print number_format($row['order_cost'])?></td></tr>
-                        <tr><td><b> Reference code</b></td><td><?php print $row['mpesa_code']?></td></tr>
+                        <tr><td><b> Amount</b></td><td> Kes <?php print number_format($row['service_fee'])?></td></tr>
+                        <tr><td><b> Reference code</b></td><td><?php print $row['payment_code']?></td></tr>
                         <tr><td><b> Payment Date</b></td><td><?php print $row['order_date']?></td></tr>
                         <tr><td><b> Payment Method</b></td><td>Mpesa</td></tr>
 
