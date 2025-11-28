@@ -13,6 +13,7 @@ $db = mysqli_connect('localhost', 'root', '', 'pet_care');
 // REGISTER USER
 if (isset($_POST['reg_user'])) {
   // receive all input values from the form
+  
   $username = mysqli_real_escape_string($db, $_POST['username']);
   $email = mysqli_real_escape_string($db, $_POST['email']);
   $phone = mysqli_real_escape_string($db, $_POST['phone']);
